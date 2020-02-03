@@ -75,8 +75,7 @@ class BERTVectorizer:
         segment_ids = tf.keras.preprocessing.sequence.pad_sequences(segment_ids, padding='post')
         valid_positions = tf.keras.preprocessing.sequence.pad_sequences(valid_positions, padding='post')
         return input_ids, input_mask, segment_ids, valid_positions, sequence_lengths
-    
-    
+
     def __vectorize(self, text: str):
         tokens, valid_positions = self.tokenize(text)
         # insert "[CLS]"
