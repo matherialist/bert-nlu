@@ -24,7 +24,6 @@ class AlbertLayer(tf.keras.layers.Layer):
             )
 
         super(AlbertLayer, self).__init__(**kwargs)
-        
 
     def build(self, input_shape):
         self.albert = hub.Module(
@@ -68,7 +67,6 @@ class AlbertLayer(tf.keras.layers.Layer):
         
         super(AlbertLayer, self).build(input_shape)
 
-    
     def call(self, inputs):
         inputs = [K.cast(x, dtype="int32") for x in inputs]
         input_ids, input_mask, segment_ids, valid_positions = inputs
@@ -77,12 +75,10 @@ class AlbertLayer(tf.keras.layers.Layer):
         )
         result = self.albert(inputs=bert_inputs, signature='tokens', as_dict=True)
         return result['pooled_output'], result['sequence_output']
-    
 
     def compute_output_shape(self, input_shape):
         return (input_shape[0], input_shape[1], self.output_size)
-    
-    
+
     def get_config(self):
         config = super().get_config().copy()
         config.update({

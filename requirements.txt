@@ -4,3 +4,4 @@ scikit-learn
 matplotlib
 bert-tensorflow
 sentencepiece
+flask
