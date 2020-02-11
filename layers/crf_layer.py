@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Original Implementation from: https://github.com/Hironsan/keras-crf-layer
 
@@ -64,11 +63,9 @@ class CRFLayer(Layer):
 
     def call(self, inputs, mask=None, **kwargs):
         inputs, sequence_lengths = inputs
-#        self.sequence_lengths = K.flatten(sequence_lengths)
         self.sequence_lengths = tf.reshape(sequence_lengths, [-1])
         y_pred = self.viterbi_decode(inputs, self.sequence_lengths)
         nb_classes = self.input_spec[0].shape[2]
-#        y_pred_one_hot = K.one_hot(y_pred, nb_classes)
         y_pred_one_hot = tf.one_hot(y_pred, nb_classes)
 
         return K.in_train_phase(inputs, y_pred_one_hot)
@@ -83,7 +80,6 @@ class CRFLayer(Layer):
         Returns:
             loss: A scalar containing the log-likelihood of the given sequence of tag indices.
         """
-#        y_true = K.cast(K.argmax(y_true, axis=-1), dtype='int32')
         y_true = tf.cast(tf.argmax(y_true, axis=-1), dtype='int32')
         log_likelihood, self.transition_params = tf.contrib.crf.crf_log_likelihood(
             y_pred, y_true, self.sequence_lengths, self.transition_params)
@@ -92,9 +88,7 @@ class CRFLayer(Layer):
         return loss
 
     def get_config(self):
-        config = {
-            'transition_params': K.eval(self.transition_params),
-        }
+        config = {'transition_params': K.eval(self.transition_params),}
         base_config = super(CRFLayer, self).get_config()
 
         return dict(list(base_config.items()) + list(config.items()))

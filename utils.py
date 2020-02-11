@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: mwahdan
 """
@@ -21,6 +20,7 @@ def convert_to_slots(slots_arr, no_class_tag='O', begin_prefix='B-', in_prefix='
     slots = []
     start = -1
     end = -1
+
     def add(name, s, e):
         if e < s:
             e = s
@@ -47,7 +47,6 @@ def convert_to_slots(slots_arr, no_class_tag='O', begin_prefix='B-', in_prefix='
         add(previous, start, end)
         
     return slots
-
 
 
 if __name__ == '__main__':

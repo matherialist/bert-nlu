@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: mwahdan
 """
@@ -18,12 +17,12 @@ import tensorflow as tf
 
 # read command-line parameters
 parser = argparse.ArgumentParser('Training the Joint BERT NLU model')
-parser.add_argument('--train', '-t', help = 'Path to training data in Goo et al format', type = str, required = True)
-parser.add_argument('--val', '-v', help = 'Path to validation data in Goo et al format', type = str, required = True)
-parser.add_argument('--save', '-s', help = 'Folder path to save the trained model', type = str, required = True)
-parser.add_argument('--epochs', '-e', help = 'Number of epochs', type = int, default = 5, required = False)
-parser.add_argument('--batch', '-bs', help = 'Batch size', type = int, default = 64, required = False)
-parser.add_argument('--type', '-tp', help = 'bert   or    albert', type = str, default = 'bert', required = False)
+parser.add_argument('--train', '-t', help='Path to training data in Goo et al format', type=str, required=True)
+parser.add_argument('--val', '-v', help='Path to validation data in Goo et al format', type=str, required=True)
+parser.add_argument('--save', '-s', help='Folder path to save the trained model', type=str, required=True)
+parser.add_argument('--epochs', '-e', help='Number of epochs', type=int, default=5, required=False)
+parser.add_argument('--batch', '-bs', help='Batch size', type=int, default=64, required=False)
+parser.add_argument('--type', '-tp', help='bert   or    albert', type=str, default='bert', required=False)
 
 
 VALID_TYPES = ['bert', 'albert']
@@ -76,16 +75,13 @@ val_intents = intents_label_encoder.transform(val_intents).astype(np.int32)
 intents_num = len(intents_label_encoder.classes_)
 
 
-model = JointBertModel(slots_num, intents_num, bert_model_hub_path, sess, 
-                       num_bert_fine_tune_layers=10, is_bert=is_bert)
+model = JointBertModel(slots_num, intents_num, bert_model_hub_path, sess, num_bert_fine_tune_layers=10, is_bert=is_bert)
 
 print('training model ...')
 model.fit([train_input_ids, train_input_mask, train_segment_ids, train_valid_positions], [train_tags, train_intents],
-          validation_data=([val_input_ids, val_input_mask, val_segment_ids, val_valid_positions], [val_tags, val_intents]),
-          epochs=epochs, batch_size=batch_size)
+          validation_data=([val_input_ids, val_input_mask, val_segment_ids, val_valid_positions],
+                           [val_tags, val_intents]), epochs=epochs, batch_size=batch_size)
 
-
-### saving
 print('Saving ..')
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)

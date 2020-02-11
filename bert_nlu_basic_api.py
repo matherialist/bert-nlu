@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Sat Jan 11 15:12:18 2020
 
@@ -18,6 +17,7 @@ import os
 
 # Create app
 app = Flask(__name__)
+
 
 def initialize():
     global graph
@@ -88,8 +88,8 @@ if __name__ == '__main__':
     
     # read command-line parameters
     parser = argparse.ArgumentParser('Running Joint BERT / ALBERT NLU model basic service')
-    parser.add_argument('--model', '-m', help = 'Path to joint BERT / ALBERT NLU model', type = str, required = True)
-    parser.add_argument('--type', '-tp', help = 'bert   or    albert', type = str, default = 'bert', required = False)
+    parser.add_argument('--model', '-m', help='Path to joint BERT / ALBERT NLU model', type=str, required=True)
+    parser.add_argument('--type', '-tp', help='bert   or    albert', type=str, default='bert', required=False)
     
     args = parser.parse_args()
     load_folder_path = args.model
@@ -103,11 +103,8 @@ if __name__ == '__main__':
         is_bert = False
     else:
         raise ValueError('type must be one of these values: %s' % str(VALID_TYPES))
-        
-    
 
-    
-    print(('Starting the Server'))
+    print('Starting the Server')
     initialize()
     # Run app
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)

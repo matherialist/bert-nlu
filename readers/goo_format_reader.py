@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: mwahdan
 """
@@ -26,6 +25,7 @@ class Reader:
             
         assert len(text_arr) == len(tags_arr) == len(labels)
         return text_arr, tags_arr, labels
-        
+
+
 if __name__ == '__main__':
     text_arr, tags_arr, labels = Reader.read('data/atis/train')

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: mwahdan
 """
@@ -18,12 +17,12 @@ import tensorflow as tf
 
 # read command-line parameters
 parser = argparse.ArgumentParser('Training the Joint BERT NLU model')
-parser.add_argument('--train', '-t', help = 'Path to training data in Goo et al format', type = str, required = True)
-parser.add_argument('--val', '-v', help = 'Path to validation data in Goo et al format', type = str, required = True)
-parser.add_argument('--save', '-s', help = 'Folder path to save the trained model', type = str, required = True)
-parser.add_argument('--epochs', '-e', help = 'Number of epochs', type = int, default = 5, required = False)
-parser.add_argument('--batch', '-bs', help = 'Batch size', type = int, default = 64, required = False)
-parser.add_argument('--type', '-tp', help = 'bert   or    albert', type = str, default = 'bert', required = False)
+parser.add_argument('--train', '-t', help='Path to training data in Goo et al format', type=str, required=True)
+parser.add_argument('--val', '-v', help='Path to validation data in Goo et al format', type=str, required=True)
+parser.add_argument('--save', '-s', help='Folder path to save the trained model', type=str, required=True)
+parser.add_argument('--epochs', '-e', help='Number of epochs', type=int, default=5, required=False)
+parser.add_argument('--batch', '-bs', help='Batch size', type=int, default=64, required=False)
+parser.add_argument('--type', '-tp', help='bert   or    albert', type=str, default='bert', required=False)
 
 
 VALID_TYPES = ['bert', 'albert']
@@ -65,9 +64,6 @@ tags_vectorizer = TagsVectorizer()
 tags_vectorizer.fit(train_tags_arr)
 train_tags = tags_vectorizer.transform(train_tags_arr, train_valid_positions)
 
-#from sklearn.preprocessing import OneHotEncoder
-#enc = OneHotEncoder(handle_unknown='ignore', sparse=False)
-#enc.fit(train_tags)
 train_tags = tf.keras.utils.to_categorical(train_tags)
 
 val_tags = tags_vectorizer.transform(val_tags_arr, val_valid_positions)
@@ -90,7 +86,6 @@ model.fit([train_input_ids, train_input_mask, train_segment_ids, train_valid_pos
           epochs=epochs, batch_size=batch_size)
 
 
-### saving
 print('Saving ..')
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: mwahdan
 """
@@ -64,6 +63,7 @@ model = JointBertCRFModel.load(load_folder_path, sess)
 data_text_arr, data_tags_arr, data_intents = Reader.read(data_folder_path)
 data_input_ids, data_input_mask, data_segment_ids, data_valid_positions, data_sequence_lengths = bert_vectorizer.transform(data_text_arr)
 
+
 def get_results(input_ids, input_mask, segment_ids, valid_positions, sequence_lengths, tags_arr, 
                 intents, tags_vectorizer, intents_label_encoder):
     predicted_tags, predicted_intents = model.predict_slots_intent(
@@ -71,10 +71,11 @@ def get_results(input_ids, input_mask, segment_ids, valid_positions, sequence_le
             tags_vectorizer, intents_label_encoder, remove_start_end=True)
     
     gold_tags = [x.split() for x in tags_arr]
-    #print(metrics.classification_report(flatten(gold_tags), flatten(predicted_tags), digits=3))
+    # print(metrics.classification_report(flatten(gold_tags), flatten(predicted_tags), digits=3))
     f1_score = metrics.f1_score(flatten(gold_tags), flatten(predicted_tags), average='micro')
     acc = metrics.accuracy_score(intents, predicted_intents)
     return f1_score, acc
+
 
 print('==== Evaluation ====')
 f1_score, acc = get_results(data_input_ids, data_input_mask, data_segment_ids, data_valid_positions,

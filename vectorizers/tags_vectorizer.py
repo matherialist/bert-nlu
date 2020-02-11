@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: mwahdan
 """
@@ -14,8 +13,7 @@ class TagsVectorizer:
     
     def tokenize(self, tags_str_arr):
         return [s.split() for s in tags_str_arr]
-    
-    
+
     def fit(self, tags_str_arr):
         self.label_encoder = LabelEncoder()
         data = ['<PAD>'] + [item for sublist in self.tokenize(tags_str_arr) for item in sublist]
