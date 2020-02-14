@@ -16,8 +16,7 @@ import json
 
 class JointBertCRFModel(JointBertModel):
 
-    def __init__(self, slots_num, intents_num, bert_hub_path, sess, num_bert_fine_tune_layers=10,
-                 is_bert=True):
+    def __init__(self, slots_num, intents_num, bert_hub_path, sess, num_bert_fine_tune_layers=10, is_bert=True):
         super(JointBertCRFModel, self).__init__(slots_num, intents_num, bert_hub_path, sess,
                                                 num_bert_fine_tune_layers, is_bert)
 

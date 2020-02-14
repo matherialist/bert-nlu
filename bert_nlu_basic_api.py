@@ -7,6 +7,7 @@ Created on Sat Jan 11 15:12:18 2020
 from flask import Flask, jsonify, request
 from vectorizers.bert_vectorizer import BERTVectorizer
 from models.joint_bert import JointBertModel
+from models.joint_bert_crf import JointBertCRFModel
 from utils import convert_to_slots
 from tensorflow.python.keras.backend import set_session
 import tensorflow as tf
@@ -46,7 +47,10 @@ def initialize():
         intents_num = len(intents_label_encoder.classes_)
     
     global model
-    model = JointBertModel.load(load_folder_path, sess)
+    try:
+        model = JointBertModel.load(load_folder_path, sess)
+    except OSError:
+        model = JointBertCRFModel.load(load_folder_path, sess)
     
 
 @app.route('/', methods=['GET', 'POST'])
@@ -64,14 +68,16 @@ def predict():
         utterance = input_json["utterance"]
         tokens = utterance.split()
         print(utterance)
-        input_ids, input_mask, segment_ids, valid_positions, data_sequence_lengths = bert_vectorizer.transform([utterance])
+        input_ids, input_mask, segment_ids, valid_positions, data_sequence_lengths = \
+            bert_vectorizer.transform([utterance])
         predicted_tags, predicted_intents = model.predict_slots_intent(
                 [input_ids, input_mask, segment_ids, valid_positions], 
                 tags_vectorizer, intents_label_encoder, remove_start_end=True,
                 include_intent_prob=True)
         
         slots = convert_to_slots(predicted_tags[0])
-        slots = [{"slot": slot, "start": start, "end": end, "value": ' '.join(tokens[start:end + 1])} for slot, start, end in slots]
+        slots = [{"slot": slot, "start": start, "end": end, "value": ' '.join(tokens[start:end + 1])}
+                 for slot, start, end in slots]
         
         response = {
                 "intent": {
