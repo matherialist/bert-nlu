@@ -17,8 +17,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 
 class JointBertModel(NLUModel):
 
-    def __init__(self, slots_num, intents_num, bert_hub_path, sess, num_bert_fine_tune_layers=10, is_bert=True,
-                 epochs=5, batch_size=32):
+    def __init__(self, slots_num, intents_num, bert_hub_path, sess, num_bert_fine_tune_layers=3, is_bert=True,):
         self.slots_num = slots_num
         self.intents_num = intents_num
         self.bert_hub_path = bert_hub_path
@@ -78,49 +77,9 @@ class JointBertModel(NLUModel):
 
         self.model = Model(inputs=bert_inputs, outputs=[slots_output, intents_fc])
 
-    def fit(self, X, Y, validation_data=None, epochs=5, batch_size=32, shuffle=True, callbacks=None):
-        """
-        X: batch of [input_ids, input_mask, segment_ids, valid_positions]
-        """
-        #X = [X[0:15], X[15: 30], X[30: 45], X[45: 60]]
-        #Y = [X[60:75], Y]
-
-        for train_index, val_index in StratifiedKFold(n_splits=5).split(X, Y):
-            X_train, X_val = X[train_index], X[val_index]
-            Y_train, Y_val = Y[train_index], Y[val_index]
-            print(X_train.shape)
-            Y_train = [X_train[:, 68:85], Y_train]
-            X_train = [X_train[:, 0:17], X_train[:, 17: 34], X_train[:, 34: 51], X_train[:, 51: 68]]
-
-            Y_val = [X_val[:, 68:85], Y_val]
-            X_val = [X_val[:, 0:17], X_val[:, 17: 34], X_val[:, 34: 51], X_val[:, 51: 68]]
-
-            print('================================================================================')
-            print(np.array(X_train[0]).shape, np.array(X_train[1]).shape, np.array(X_train[2]).shape,
-                  np.array(X_train[3]).shape, np.array(Y_train[0]).shape, np.array(Y_train[1]).shape)
-
-            X_train = (X_train[0], X_train[1], X_train[2], self.prepare_valid_positions(X_train[3]))
-            X_val = (X_val[0], X_val[1], X_val[2], self.prepare_valid_positions(X_val[3]))
-
-            history = self.model.fit(X_train, Y_train, validation_data=(X_val, Y_val), epochs=epochs, batch_size=batch_size)
-            self.visualize_metric(history.history, 'slots_tagger_loss')
-            self.visualize_metric(history.history, 'intent_classifier_loss')
-            self.visualize_metric(history.history, 'loss')
-            self.visualize_metric(history.history, 'intent_classifier_acc')
-        '''   
-        X = (X[0], X[1], X[2], self.prepare_valid_positions(X[3]))
-
-        if validation_data is not None:
-            validation_data = [validation_data[0:15], validation_data[15, 30], validation_data[30: 45], validation_data[45: 60]], [validation_data[60:75], validation_data]
-            X_val, Y_val = validation_data
-            validation_data = ((X_val[0], X_val[1], X_val[2], self.prepare_valid_positions(X_val[3])), Y_val)
-
+    def fit(self, X, Y, validation_data=None, epochs=5, batch_size=32, callbacks=None):
         history = self.model.fit(X, Y, validation_data=validation_data, epochs=epochs, batch_size=batch_size)
-        self.visualize_metric(history.history, 'slots_tagger_loss')
-        self.visualize_metric(history.history, 'intent_classifier_loss')
-        self.visualize_metric(history.history, 'loss')
-        self.visualize_metric(history.history, 'intent_classifier_acc')
-        '''
+        return history
 
     def prepare_valid_positions(self, in_valid_positions):
         in_valid_positions = np.expand_dims(in_valid_positions, axis=2)
